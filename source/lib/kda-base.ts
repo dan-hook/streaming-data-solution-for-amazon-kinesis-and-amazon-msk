@@ -112,7 +112,7 @@ export abstract class FlinkBase extends cdk.Construct {
         const customResourceFunction = new lambda.Function(this, 'CustomResource', {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
-            role: customResouceRole.Role,
+            role: customResouceRole.role,
             code: lambda.Code.fromAsset('lambda/kda-vpc-config'),
             timeout: cdk.Duration.seconds(30)
         });

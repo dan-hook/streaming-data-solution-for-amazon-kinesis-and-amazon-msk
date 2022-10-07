@@ -16,3 +16,7 @@ cdk.out
 
 # Coverage reports
 test/coverage-reports
+
+#JSII
+.jsii
+.npmignore

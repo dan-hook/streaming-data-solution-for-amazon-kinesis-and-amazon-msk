@@ -91,13 +91,13 @@ export class KdsKdfS3 extends cdk.Stack {
         // Dynamic partitioning configuration
         const dynamicPartitioning = new cdk.CfnParameter(this, 'DynamicPartitioning', {
             type: 'String',
-            default: FeatureStatus.Disabled,
+            default: FeatureStatus.DISABLED,
             allowedValues: Object.values(FeatureStatus)
         });
 
         const newLineDelimiter = new cdk.CfnParameter(this, 'NewLineDelimiter', {
             type: 'String',
-            default: FeatureStatus.Disabled,
+            default: FeatureStatus.DISABLED,
             allowedValues: Object.values(FeatureStatus)
         });
 
@@ -114,7 +114,7 @@ export class KdsKdfS3 extends cdk.Stack {
         });
 
         const kdf = new DeliveryStream(this, 'Kdf', {
-            inputDataStream: kds.Stream,
+            inputDataStream: kds.stream,
 
             bufferingInterval: bufferingInterval.valueAsNumber,
             bufferingSize: bufferingSize.valueAsNumber,
@@ -132,8 +132,8 @@ export class KdsKdfS3 extends cdk.Stack {
         //---------------------------------------------------------------------
         // Monitoring (dashboard and alarms) configuration
         new DeliveryStreamMonitoring(this, 'Monitoring', {
-            dataStreamName: kds.Stream.streamName,
-            deliveryStreamName: kdf.DeliveryStreamArn,
+            dataStreamName: kds.stream.streamName,
+            deliveryStreamName: kdf.deliveryStreamArn,
             createLimitAlarms: false
         });
 
@@ -228,17 +228,17 @@ export class KdsKdfS3 extends cdk.Stack {
         // Stack outputs
         new cdk.CfnOutput(this, 'DataStreamName', {
             description: 'Name of the Amazon Kinesis Data stream',
-            value: kds.Stream.streamName
+            value: kds.stream.streamName
         });
 
         new cdk.CfnOutput(this, 'DeliveryStreamName', {
             description: 'Name of the Amazon Kinesis Data Firehose delivery stream',
-            value: kdf.DeliveryStreamName
+            value: kdf.deliveryStreamName
         });
 
         new cdk.CfnOutput(this, 'OutputBucketName', {
             description: 'Name of the Amazon S3 destination bucket',
-            value: kdf.OutputBucket.bucketName
+            value: kdf.outputBucket.bucketName
         });
     }
 }

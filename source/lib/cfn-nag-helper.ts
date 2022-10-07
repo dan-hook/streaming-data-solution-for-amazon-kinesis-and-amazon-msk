@@ -13,21 +13,21 @@
 
 import * as cdk from '@aws-cdk/core';
 
-export interface CfnNagSuppression {
-    Id: string;
-    Reason: string;
+export interface ICfnNagSuppression {
+    id: string;
+    reason: string;
 }
 
 export class CfnNagHelper {
-    public static addSuppressions(resource: cdk.CfnResource, suppressions: CfnNagSuppression | CfnNagSuppression[]) {
+    public static addSuppressions(resource: cdk.CfnResource, suppressions: ICfnNagSuppression | ICfnNagSuppression[]) {
         let rules = [];
 
         if (suppressions instanceof Array) {
             for (const suppression of suppressions) {
-                rules.push({ id: suppression.Id, reason: suppression.Reason });
+                rules.push({ id: suppression.id, reason: suppression.reason });
             }
         } else {
-            rules.push({ id: suppressions.Id, reason: suppressions.Reason });
+            rules.push({ id: suppressions.id, reason: suppressions.reason });
         }
 
         if (resource.cfnOptions.metadata?.cfn_nag) {

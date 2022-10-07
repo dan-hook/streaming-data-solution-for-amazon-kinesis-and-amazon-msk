@@ -35,25 +35,25 @@ export interface DeliveryStreamProps {
 }
 
 export enum FeatureStatus {
-    Enabled = 'Enabled',
-    Disabled = 'Disabled'
+    ENABLED = 'Enabled',
+    DISABLED = 'Disabled'
 }
 
 export enum CompressionFormat {
     GZIP = 'GZIP',
     HADOOP_SNAPPY = 'HADOOP_SNAPPY',
-    Snappy = 'Snappy',
+    SNAPPY = 'Snappy',
     UNCOMPRESSED = 'UNCOMPRESSED',
     ZIP = 'ZIP'
 }
 
 export class DeliveryStream extends cdk.Construct {
     private readonly Output: EncryptedBucket;
-    public readonly DeliveryStreamArn: string;
-    public readonly DeliveryStreamName: string;
+    public readonly deliveryStreamArn: string;
+    public readonly deliveryStreamName: string;
 
-    public get OutputBucket(): s3.IBucket {
-        return this.Output.Bucket;
+    public get outputBucket(): s3.IBucket {
+        return this.Output.bucket;
     }
 
     constructor(scope: cdk.Construct, id: string, props: DeliveryStreamProps) {
@@ -82,18 +82,18 @@ export class DeliveryStream extends cdk.Construct {
             enableIntelligentTiering: true
         });
 
-        this.OutputBucket.grantWrite(firehoseRole);
+        this.outputBucket.grantWrite(firehoseRole);
 
         const dpEnabledCondition = new cdk.CfnCondition(this, 'DynamicPartitioningEnabled', {
-            expression: cdk.Fn.conditionEquals(props.dynamicPartitioning, FeatureStatus.Enabled)
+            expression: cdk.Fn.conditionEquals(props.dynamicPartitioning, FeatureStatus.ENABLED)
         });
 
         const dpDisabledCondition = new cdk.CfnCondition(this, 'DynamicPartitioningDisabled', {
-            expression: cdk.Fn.conditionEquals(props.dynamicPartitioning, FeatureStatus.Disabled)
+            expression: cdk.Fn.conditionEquals(props.dynamicPartitioning, FeatureStatus.DISABLED)
         });
 
         const newLineCondition = new cdk.CfnCondition(this, 'NewLineDelimiter', {
-            expression: cdk.Fn.conditionEquals(props.newLineDelimiter, FeatureStatus.Enabled)
+            expression: cdk.Fn.conditionEquals(props.newLineDelimiter, FeatureStatus.ENABLED)
         });
 
         const commonFirehoseProps = {
@@ -105,7 +105,7 @@ export class DeliveryStream extends cdk.Construct {
         };
 
         const commonDestinationProps = {
-            bucketArn: this.OutputBucket.bucketArn,
+            bucketArn: this.outputBucket.bucketArn,
             roleArn: firehoseRole.roleArn,
             bufferingHints: {
                 intervalInSeconds: props.bufferingInterval,
@@ -175,13 +175,13 @@ export class DeliveryStream extends cdk.Construct {
         kdfWithoutDP.cfnOptions.condition = dpDisabledCondition;
         kdfWithDp.cfnOptions.condition = dpEnabledCondition;
 
-        this.DeliveryStreamArn = cdk.Fn.conditionIf(
+        this.deliveryStreamArn = cdk.Fn.conditionIf(
             dpEnabledCondition.logicalId,
             kdfWithDp.getAtt('Arn'),
             kdfWithoutDP.getAtt('Arn')
         ).toString();
 
-        this.DeliveryStreamName = cdk.Fn.conditionIf(
+        this.deliveryStreamName = cdk.Fn.conditionIf(
             dpEnabledCondition.logicalId,
             kdfWithDp.ref,
             kdfWithoutDP.ref

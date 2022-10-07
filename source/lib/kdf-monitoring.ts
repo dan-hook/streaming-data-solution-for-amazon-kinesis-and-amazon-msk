@@ -50,7 +50,7 @@ export class DeliveryStreamMonitoring extends MonitoringBase {
     }
 
     private addFirehoseMetrics(deliveryStreamName: string, createLimitAlarms: boolean, dataStreamName?: string) {
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Data Firehose Metrics\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Data Firehose Metrics\n'));
 
         const monitoringPeriod = cdk.Duration.minutes(5);
 
@@ -128,7 +128,7 @@ export class DeliveryStreamMonitoring extends MonitoringBase {
             const throttledRecordsMetric = new cw.Metric({ ...defaultMetricProps, metricName: 'ThrottledRecords' });
 
             //---------------------------------------------------------------------
-            this.Dashboard.addWidgets(
+            this.dashboard.addWidgets(
                 this.createWidgetWithoutUnits('Incoming bytes per second', [incomingBytesExpression, bytesPerSecondMetric], 'Bytes', 0),
                 this.createWidgetWithoutUnits('Incoming put requests per second', [putRequestsExpression, putRequestsPerSecondMetric], 'Count', 0),
                 this.createWidgetWithoutUnits('Incoming records per second', [incomingRecordsExpression, recordsPerSecondMetric], 'Count', 0),
@@ -185,7 +185,7 @@ export class DeliveryStreamMonitoring extends MonitoringBase {
                     })
                 });
 
-                this.Dashboard.addWidgets(
+                this.dashboard.addWidgets(
                     this.createAlarmWidget('Incoming bytes (percentage of limit)', incomingBytesAlarm),
                     this.createAlarmWidget('Incoming put requests (percentage of limit)', incomingPutRequestsAlarm),
                     this.createAlarmWidget('Incoming records (percentage of limit)', incomingRecordsAlarm),
@@ -206,7 +206,7 @@ export class DeliveryStreamMonitoring extends MonitoringBase {
             });
 
             //---------------------------------------------------------------------
-            this.Dashboard.addWidgets(
+            this.dashboard.addWidgets(
                 this.createWidgetWithUnits('Records read from Kinesis Data Streams (Sum)', dataReadRecordsMetric),
                 this.createWidgetWithUnits('Bytes read from Kinesis Data Streams (Sum)', dataReadBytesMetric),
                 this.createWidgetWithUnits('GetRecords operations throttled (Average)', getRecordsThrottledMetric),
@@ -246,7 +246,7 @@ export class DeliveryStreamMonitoring extends MonitoringBase {
         const deliveryBytesMetric = new cw.Metric({ ...defaultMetricProps, metricName: 'DeliveryToS3.Bytes' });
 
         //---------------------------------------------------------------------
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createWidgetWithoutUnits('Delivery to Amazon S3 success', deliverySuccessExpression, 'Percentage', 0, 100),
             this.createAlarmWidget('Delivery to Amazon S3 data freshness (Maximum)', deliveryFreshnessAlarm),
             this.createWidgetWithUnits('Records delivered to Amazon S3 (Sum)', deliveryRecordsMetric),

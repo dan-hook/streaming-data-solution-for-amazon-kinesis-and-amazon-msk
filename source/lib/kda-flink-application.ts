@@ -136,8 +136,8 @@ export class FlinkApplication extends FlinkBase {
     private addCfnNagSuppressions() {
         const cfnRole = this.Role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'EC2 actions in VPC policy do not support resource level permissions'
+            id: 'W11',
+            reason: 'EC2 actions in VPC policy do not support resource level permissions'
         });
     }
 }

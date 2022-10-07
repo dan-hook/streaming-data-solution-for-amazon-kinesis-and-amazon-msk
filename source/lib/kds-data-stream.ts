@@ -26,7 +26,7 @@ export interface DataStreamProps {
 }
 
 export class DataStream extends cdk.Construct {
-    public readonly Stream: kinesis.Stream;
+    public readonly stream: kinesis.Stream;
 
     constructor(scope: cdk.Construct, id: string, props: DataStreamProps) {
         super(scope, id);
@@ -35,7 +35,7 @@ export class DataStream extends cdk.Construct {
             throw new Error('shardCount must be a positive number');
         }
 
-        this.Stream = new kinesis.Stream(this, 'DataStream', {
+        this.stream = new kinesis.Stream(this, 'DataStream', {
             encryption: kinesis.StreamEncryption.MANAGED,
             shardCount: props.shardCount,
             retentionPeriod: props.retentionPeriod
@@ -55,16 +55,16 @@ export class DataStream extends cdk.Construct {
             })
         });
 
-        const cfnRole = customResouceRole.Role.node.defaultChild as iam.CfnRole;
+        const cfnRole = customResouceRole.role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'Kinesis enhanced monitoring actions do not support resource level permissions'
+            id: 'W11',
+            reason: 'Kinesis enhanced monitoring actions do not support resource level permissions'
         });
 
         const customResourceFunction = new lambda.Function(this, 'CustomResource', {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
-            role: customResouceRole.Role,
+            role: customResouceRole.role,
             code: lambda.Code.fromAsset('lambda/kds-enhanced-monitoring'),
             timeout: cdk.Duration.seconds(30)
         });
@@ -73,7 +73,7 @@ export class DataStream extends cdk.Construct {
             serviceToken: customResourceFunction.functionArn,
             properties: {
                 'EnableEnhancedMonitoring': enableEnhancedMonitoring,
-                'StreamName': this.Stream.streamName
+                'StreamName': this.stream.streamName
             },
             resourceType: 'Custom::EnhancedMonitoring'
         });

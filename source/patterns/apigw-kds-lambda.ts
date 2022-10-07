@@ -98,7 +98,7 @@ export class ApiGwKdsLambda extends cdk.Stack {
                     })
                 }
             },
-            existingStreamObj: kds.Stream
+            existingStreamObj: kds.stream
         });
 
         //---------------------------------------------------------------------
@@ -125,7 +125,7 @@ export class ApiGwKdsLambda extends cdk.Stack {
         });
 
         const kdsToLambda = new KinesisStreamsToLambda(this, 'KdsLambda', {
-            existingStreamObj: kds.Stream,
+            existingStreamObj: kds.stream,
             createCloudWatchAlarms: false,
             deploySqsDlqQueue: true,
             lambdaFunctionProps: {
@@ -146,7 +146,7 @@ export class ApiGwKdsLambda extends cdk.Stack {
         //---------------------------------------------------------------------
         // Monitoring (dashboard and alarms) configuration
         new DataStreamMonitoring(this, 'Monitoring', {
-            streamName: kds.Stream.streamName,
+            streamName: kds.stream.streamName,
             lambdaFunctionName: kdsToLambda.lambdaFunction.functionName
         });
 
@@ -234,7 +234,7 @@ export class ApiGwKdsLambda extends cdk.Stack {
 
         new cdk.CfnOutput(this, 'DataStreamName', {
             description: 'Name of the Amazon Kinesis Data stream',
-            value: kds.Stream.streamName
+            value: kds.stream.streamName
         });
 
         new cdk.CfnOutput(this, 'LambdaConsumerArn', {

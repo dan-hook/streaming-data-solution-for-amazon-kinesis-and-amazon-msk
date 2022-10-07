@@ -177,12 +177,12 @@ export class MskLambdaRoleStack extends cdk.Stack {
             policy.node.defaultChild as iam.CfnPolicy,
             [
                 {
-                    Id: 'W12',
-                    Reason: 'Some actions do not support resource level permissions'
+                    id: 'W12',
+                    reason: 'Some actions do not support resource level permissions'
                 },
                 {
-                    Id: 'W76',
-                    Reason: 'SPCM is higher than 25 since role is used for several tasks during a lab'
+                    id: 'W76',
+                    reason: 'SPCM is higher than 25 since role is used for several tasks during a lab'
                 }
             ]
         );

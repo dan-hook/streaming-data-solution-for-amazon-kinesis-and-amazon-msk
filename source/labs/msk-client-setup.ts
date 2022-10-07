@@ -128,7 +128,7 @@ export class MskClientStack extends cdk.Stack {
             description: 'This function creates prerequisite resources for Cloud9 (such as IAM roles)',
             code: lambda.Code.fromAsset('lambda/cloud9-setup'),
             timeout: cdk.Duration.minutes(1),
-            role: executionRole.Role
+            role: executionRole.role
         });
 
         const cloud9CR = new cdk.CustomResource(this, 'Cloud9Helper', {
@@ -169,8 +169,8 @@ export class MskClientStack extends cdk.Stack {
         });
 
         CfnNagHelper.addSuppressions(kafkaClientSG, {
-            Id: 'W9',
-            Reason: 'Access is restricted to the public subnet where the Cloud9 environment is located'
+            id: 'W9',
+            reason: 'Access is restricted to the public subnet where the Cloud9 environment is located'
         });
 
         new ec2.CfnSecurityGroupIngress(this, 'KafkaClientInstanceSecurityGroup8081', {

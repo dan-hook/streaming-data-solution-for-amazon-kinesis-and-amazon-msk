@@ -59,7 +59,7 @@ export class MskKdaS3 extends cdk.Stack {
             clusterArn: clusterArn.valueAsString
         });
 
-        outputBucket.Bucket.grantReadWrite(kda.ApplicationRole);
+        outputBucket.bucket.grantReadWrite(kda.ApplicationRole);
 
         //---------------------------------------------------------------------
         // Solution metrics
@@ -102,7 +102,7 @@ export class MskKdaS3 extends cdk.Stack {
 
         new cdk.CfnOutput(this, 'OutputBucketName', {
             description: 'Name of the Amazon S3 destination bucket',
-            value: outputBucket.Bucket.bucketName
+            value: outputBucket.bucket.bucketName
         });
     }
 }

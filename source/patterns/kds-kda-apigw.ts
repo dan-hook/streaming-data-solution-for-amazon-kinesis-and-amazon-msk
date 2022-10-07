@@ -79,7 +79,7 @@ export class KdsKdaApiGw extends cdk.Stack {
         });
 
         const kpl = new KinesisProducer(this, 'Kpl', {
-            stream: kds.Stream,
+            stream: kds.stream,
             vpcId: producerVpc.valueAsString,
             subnetId: producerSubnet.valueAsString,
             imageId: producerAmiId.valueAsString,
@@ -128,7 +128,7 @@ export class KdsKdaApiGw extends cdk.Stack {
             environmentProperties: {
                 propertyGroupId: 'FlinkApplicationProperties',
                 propertyMap: {
-                    'InputStreamName': kds.Stream.streamName,
+                    'InputStreamName': kds.stream.streamName,
                     'Region': cdk.Aws.REGION,
                     'RideApiEndpoint': fareEndpointApi.url,
                     'ApiKey': apiKey
@@ -149,7 +149,7 @@ export class KdsKdaApiGw extends cdk.Stack {
             securityGroupIds: securityGroups.valueAsList
         });
 
-        kds.Stream.grantRead(kda.ApplicationRole);
+        kds.stream.grantRead(kda.ApplicationRole);
         kda.ApplicationRole.addToPrincipalPolicy(new iam.PolicyStatement({
             resources: [`arn:${cdk.Aws.PARTITION}:execute-api:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:${fareEndpointApi.restApiId}/*/GET/*`],
             actions: ['execute-api:Invoke']
@@ -171,7 +171,7 @@ export class KdsKdaApiGw extends cdk.Stack {
         new ApplicationMonitoring(this, 'Monitoring', {
             applicationName: kda.ApplicationName,
             logGroupName: kda.LogGroupName,
-            inputStreamName: kds.Stream.streamName
+            inputStreamName: kds.stream.streamName
         });
 
         //---------------------------------------------------------------------
@@ -246,12 +246,12 @@ export class KdsKdaApiGw extends cdk.Stack {
         // Stack outputs
         new cdk.CfnOutput(this, 'ProducerInstance', {
             description: 'ID of the KPL Amazon EC2 instance',
-            value: kpl.InstanceId
+            value: kpl.instanceId
         });
 
         new cdk.CfnOutput(this, 'DataStreamName', {
             description: 'Name of the Amazon Kinesis Data stream',
-            value: kds.Stream.streamName
+            value: kds.stream.streamName
         });
 
         new cdk.CfnOutput(this, 'ApplicationName', {
@@ -262,11 +262,11 @@ export class KdsKdaApiGw extends cdk.Stack {
 
     private createFarePredictionEndpoint(): [apigw.RestApi, string] {
         const functionRole = new ExecutionRole(this, 'PredictFareRole');
-        const predictFareLambda =  new lambda.Function(this, 'PredictFareLambda', {
+        const predictFareLambda = new lambda.Function(this, 'PredictFareLambda', {
             runtime: lambda.Runtime.NODEJS_14_X,
             code: lambda.Code.fromAsset('lambda/taxi-fare-endpoint'),
             handler: 'index.handler',
-            role: functionRole.Role
+            role: functionRole.role
         });
 
         const pattern = new ApiGatewayToLambda(this, 'RideApi', {

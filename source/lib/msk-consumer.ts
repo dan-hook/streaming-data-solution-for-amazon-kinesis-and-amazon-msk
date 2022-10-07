@@ -153,13 +153,13 @@ export class KafkaConsumer extends cdk.Construct {
             })
         });
 
-        const cfnRole = executionRole.Role.node.defaultChild as iam.CfnRole;
+        const cfnRole = executionRole.role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'Actions do not support resource level permissions'
+            id: 'W11',
+            reason: 'Actions do not support resource level permissions'
         });
 
-        return executionRole.Role;
+        return executionRole.role;
     }
 
     private createPolicyForSecret(functionRole: iam.IRole, scramSecretArn: string) {
@@ -206,7 +206,7 @@ export class KafkaConsumer extends cdk.Construct {
         const customResourceFunction = new lambda.Function(this, 'CustomResource', {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
-            role: customResouceRole.Role,
+            role: customResouceRole.role,
             code: lambda.Code.fromAsset('lambda/secrets-manager-metadata'),
             timeout: cdk.Duration.seconds(30)
         });
@@ -217,7 +217,7 @@ export class KafkaConsumer extends cdk.Construct {
             resourceType: 'Custom::SecretMetadata'
         });
 
-        (customResouceRole.Role.node.defaultChild as iam.CfnRole).cfnOptions.condition = this.IsSecretNotEmpty;
+        (customResouceRole.role.node.defaultChild as iam.CfnRole).cfnOptions.condition = this.IsSecretNotEmpty;
         (customResourceFunction.node.defaultChild as lambda.CfnFunction).cfnOptions.condition = this.IsSecretNotEmpty;
         (secretMetadata.node.defaultChild as cdk.CfnResource).cfnOptions.condition = this.IsSecretNotEmpty;
 

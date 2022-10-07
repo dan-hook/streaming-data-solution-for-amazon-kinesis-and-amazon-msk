@@ -15,8 +15,8 @@ import * as cdk from '@aws-cdk/core';
 import * as cw from '@aws-cdk/aws-cloudwatch';
 
 export abstract class MonitoringBase extends cdk.Construct {
-    protected readonly Dashboard: cw.Dashboard;
-    protected readonly MONITORING_PERIOD: cdk.Duration = cdk.Duration.minutes(1);
+    protected readonly dashboard: cw.Dashboard;
+    protected readonly monitoringPeriod: cdk.Duration = cdk.Duration.minutes(1);
 
     // These values are recommended, but can be ajusted depending on the workload.
     private readonly KDS_ITERATOR_AGE_THRESHOLD: number = 60000;
@@ -26,7 +26,7 @@ export abstract class MonitoringBase extends cdk.Construct {
 
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
-        this.Dashboard = new cw.Dashboard(this, 'Dashboard');
+        this.dashboard = new cw.Dashboard(this, 'Dashboard');
     }
 
     protected createMarkdownWidget(text: string): cw.TextWidget {
@@ -51,7 +51,7 @@ export abstract class MonitoringBase extends cdk.Construct {
 
         const defaultMetricProps = {
             namespace: 'AWS/Kinesis',
-            period: this.MONITORING_PERIOD,
+            period: this.monitoringPeriod,
             statistic: 'Average',
             dimensionsMap: { 'StreamName': streamName }
         };
@@ -62,7 +62,7 @@ export abstract class MonitoringBase extends cdk.Construct {
             comparisonOperator: cw.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD
         };
 
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Data Stream Metrics\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Data Stream Metrics\n'));
 
         //---------------------------------------------------------------------
         const iteratorAgeAlarm = new cw.Alarm(this, 'IteratorAgeAlarm', {
@@ -116,7 +116,7 @@ export abstract class MonitoringBase extends cdk.Construct {
         });
 
         //---------------------------------------------------------------------
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createAlarmWidget('Get records iterator age (Milliseconds)', iteratorAgeAlarm),
             this.createAlarmWidget('Read throughput exceeded (Percent)', readProvisionedAlarm),
             this.createAlarmWidget('Write throughput exceeded (Percent)', writeProvisionedAlarm),

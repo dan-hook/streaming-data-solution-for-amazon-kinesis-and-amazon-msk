@@ -52,7 +52,7 @@ export class MskLambdaKdf extends cdk.Stack {
         });
 
         const kdfToS3 = new KinesisFirehoseToS3(this, 'KdfToS3', {
-            existingBucketObj: outputBucket.Bucket,
+            existingBucketObj: outputBucket.bucket,
             kinesisFirehoseProps: {
                 deliveryStreamType: 'DirectPut',
                 deliveryStreamEncryptionConfigurationInput: {
@@ -184,7 +184,7 @@ export class MskLambdaKdf extends cdk.Stack {
 
         new cdk.CfnOutput(this, 'OutputBucketName', {
             description: 'Name of the Amazon S3 destination bucket',
-            value: outputBucket.Bucket.bucketName
+            value: outputBucket.bucket.bucketName
         });
     }
 }

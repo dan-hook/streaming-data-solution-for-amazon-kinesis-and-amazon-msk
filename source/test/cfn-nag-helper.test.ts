@@ -29,23 +29,23 @@ test('removes duplicate suppressions', () => {
 
     // Add individual suppression
     CfnNagHelper.addSuppressions(cfnBucket, {
-        Id: 'W1',
-        Reason: 'This should be ignored'
+        id: 'W1',
+        reason: 'This should be ignored'
     });
 
     // Add multiple suppressions (one of which is an overwrite)
     CfnNagHelper.addSuppressions(cfnBucket, [
         {
-            Id: 'W1',
-            Reason: 'Reason for warning 1'
+            id: 'W1',
+            reason: 'Reason for warning 1'
         },
         {
-            Id: 'W2',
-            Reason: 'Reason for warning 2'
+            id: 'W2',
+            reason: 'Reason for warning 2'
         },
         {
-            Id: 'W3',
-            Reason: 'Reason for warning 3'
+            id: 'W3',
+            reason: 'Reason for warning 3'
         }
     ]);
 

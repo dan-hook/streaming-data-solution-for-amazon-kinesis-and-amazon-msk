@@ -190,8 +190,8 @@ export class FlinkStudio extends FlinkBase {
     private addCfnNagSuppressions() {
         const cfnRole = this.Role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'EC2 actions do not support resource level permissions / Studio uses default Glue database'
+            id: 'W11',
+            reason: 'EC2 actions do not support resource level permissions / Studio uses default Glue database'
         });
     }
 }

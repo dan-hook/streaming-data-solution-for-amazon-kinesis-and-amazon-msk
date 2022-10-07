@@ -32,7 +32,7 @@ export interface KinesisProducerProps {
 export class KinesisProducer extends cdk.Construct {
     private readonly Instance: ec2.CfnInstance;
 
-    public get InstanceId(): string {
+    public get instanceId(): string {
         return this.Instance.ref;
     }
 
@@ -147,8 +147,8 @@ export class KinesisProducer extends cdk.Construct {
         });
 
         CfnNagHelper.addSuppressions(securityGroup, {
-            Id: 'W5',
-            Reason: 'Outbound access is allowed to connect to Kinesis'
+            id: 'W5',
+            reason: 'Outbound access is allowed to connect to Kinesis'
         });
 
         return securityGroup;
@@ -158,8 +158,8 @@ export class KinesisProducer extends cdk.Construct {
         const cfnPolicy = policy.node.defaultChild as iam.CfnPolicy;
 
         CfnNagHelper.addSuppressions(cfnPolicy, {
-            Id: 'W12',
-            Reason: reason
+            id: 'W12',
+            reason: reason
         });
     }
 }

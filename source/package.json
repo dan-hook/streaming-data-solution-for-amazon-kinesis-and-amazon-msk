@@ -1,17 +1,23 @@
 {
   "name": "streaming-data-solution",
   "version": "1.6.2",
+  "description": "jsii version of stream-data-solution",
   "bin": {
     "streaming-data-solution": "bin/streaming-data-solution.js"
   },
+  "main": "lib/index.ts",
+  "repository": {
+    "url": "https://github.com/dan-hook/streaming-data-solution-for-amazon-kinesis-and-amazon-msk.git"
+  },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "jsii",
+    "watch": "jsii -w",
     "test": "jest --coverage",
     "cdk": "cdk",
     "clean": "rm -rf node_modules && rm -rf test/__snapshots__",
     "code-linter": "./node_modules/eslint/bin/eslint.js . --ext .ts --ext .js",
-    "code-formatter": "./node_modules/prettier/bin-prettier.js --config .prettierrc.yml '**/*.ts' '**/*.js' --write"
+    "code-formatter": "./node_modules/prettier/bin-prettier.js --config .prettierrc.yml '**/*.ts' '**/*.js' --write",
+    "package": "jsii-pacmak -vvv"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.136.0",
@@ -24,11 +30,17 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^26.4.2",
+    "jsii": "^1.69.0",
+    "jsii-pacmak": "^1.69.0",
     "prettier": "^2.4.1",
     "ts-jest": "^26.2.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
+  "bundledDependencies": [
+    "source-map-support",
+    "vm2"
+  ],
   "dependencies": {
     "@aws-cdk/aws-cloud9": "1.136.0",
     "@aws-cdk/aws-cloudwatch": "1.136.0",
@@ -56,5 +68,17 @@
   "license": "Apache-2.0",
   "author": {
     "name": "aws-solutions-builder"
+  },
+  "stability": "stable",
+  "types": "lib/index.d.ts",
+  "jsii": {
+    "outdir": "dist",
+    "versionFormat": "full",
+    "targets": {
+      "python": {
+        "distName": "cdk-streaming",
+        "module": "cdk_streaming"
+      }
+    }
   }
 }

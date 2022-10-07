@@ -29,14 +29,14 @@ test('creates a KDF delivery stream', () => {
         compressionFormat: CompressionFormat.GZIP,
         dataPrefix: 'data/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/',
         errorsPrefix: 'errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/!{firehose:error-output-type}',
-        dynamicPartitioning: FeatureStatus.Enabled,
-        newLineDelimiter: FeatureStatus.Disabled,
+        dynamicPartitioning: FeatureStatus.ENABLED,
+        newLineDelimiter: FeatureStatus.DISABLED,
         jqExpression: '{ foo: .bar }',
         retryDuration: 300
     });
 
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
-    expect(kdf.DeliveryStreamArn).not.toBeUndefined();
-    expect(kdf.DeliveryStreamName).not.toBeUndefined();
-    expect(kdf.OutputBucket).not.toBeUndefined();
+    expect(kdf.deliveryStreamArn).not.toBeUndefined();
+    expect(kdf.deliveryStreamName).not.toBeUndefined();
+    expect(kdf.outputBucket).not.toBeUndefined();
 });

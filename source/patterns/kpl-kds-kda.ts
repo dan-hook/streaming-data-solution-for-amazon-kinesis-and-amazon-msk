@@ -72,7 +72,7 @@ export class KplKdsKda extends cdk.Stack {
         });
 
         const kpl = new KinesisProducer(this, 'Kpl', {
-            stream: kds.Stream,
+            stream: kds.stream,
             vpcId: producerVpc.valueAsString,
             subnetId: producerSubnet.valueAsString,
             imageId: producerAmiId.valueAsString,
@@ -108,8 +108,8 @@ export class KplKdsKda extends cdk.Stack {
             securityGroupIds: securityGroups.valueAsList
         });
 
-        kds.Stream.grantRead(kda.ApplicationRole);
-        outputBucket.Bucket.grantReadWrite(kda.ApplicationRole);
+        kds.stream.grantRead(kda.ApplicationRole);
+        outputBucket.bucket.grantReadWrite(kda.ApplicationRole);
 
         //---------------------------------------------------------------------
         // Solution metrics
@@ -182,12 +182,12 @@ export class KplKdsKda extends cdk.Stack {
         // Stack outputs
         new cdk.CfnOutput(this, 'ProducerInstance', {
             description: 'ID of the KPL Amazon EC2 instance',
-            value: kpl.InstanceId
+            value: kpl.instanceId
         });
 
         new cdk.CfnOutput(this, 'DataStreamName', {
             description: 'Name of the Amazon Kinesis Data stream',
-            value: kds.Stream.streamName
+            value: kds.stream.streamName
         });
 
         new cdk.CfnOutput(this, 'StudioNotebookName', {
@@ -197,7 +197,7 @@ export class KplKdsKda extends cdk.Stack {
 
         new cdk.CfnOutput(this, 'OutputBucketName', {
             description: 'Name of the Amazon S3 destination bucket',
-            value: outputBucket.Bucket.bucketName
+            value: outputBucket.bucket.bucketName
         });
     }
 }

@@ -163,8 +163,8 @@ export class KafkaClient extends cdk.Construct {
         const cfnPolicy = policy.node.defaultChild as iam.CfnPolicy;
 
         CfnNagHelper.addSuppressions(cfnPolicy, {
-            Id: 'W12',
-            Reason: reason
+            id: 'W12',
+            reason: reason
         });
     }
 }

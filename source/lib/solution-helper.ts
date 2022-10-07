@@ -58,7 +58,7 @@ export class SolutionHelper extends cdk.Construct {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
             description: 'This function generates UUID for each deployment and sends anonymous data to the AWS Solutions team',
-            role: helperRole.Role,
+            role: helperRole.role,
             code: lambda.Code.fromAsset('lambda/solution-helper'),
             timeout: cdk.Duration.seconds(30)
         });

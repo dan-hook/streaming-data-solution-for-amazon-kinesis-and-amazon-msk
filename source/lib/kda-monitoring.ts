@@ -34,7 +34,7 @@ export class ApplicationMonitoring extends MonitoringBase {
 
     private DEFAULT_METRIC_PROPS = {
         namespace: 'AWS/KinesisAnalytics',
-        period: this.MONITORING_PERIOD,
+        period: this.monitoringPeriod,
         dimensionsMap: { 'Application': '' }
     };
 
@@ -75,7 +75,7 @@ export class ApplicationMonitoring extends MonitoringBase {
     }
 
     private addApplicationHealth() {
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Application Health\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Application Health\n'));
 
         //---------------------------------------------------------------------
         const downtimeAlarm = new cw.Alarm(this, 'DowntimeAlarm', {
@@ -127,7 +127,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             statistic: 'Average'
         });
 
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createAlarmWidget('Downtime', downtimeAlarm),
             this.createWidgetWithoutUnits('Uptime', uptimeMetric),
             this.createWidgetWithoutUnits('Flink Job Restarts', jobRestartsMetric),
@@ -138,7 +138,7 @@ export class ApplicationMonitoring extends MonitoringBase {
     }
 
     private addResourceUtilization() {
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Resource Utilization\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Resource Utilization\n'));
 
         //---------------------------------------------------------------------
         const cpuUtilizationAlarm = new cw.Alarm(this, 'CpuUtilizationAlarm', {
@@ -166,7 +166,7 @@ export class ApplicationMonitoring extends MonitoringBase {
         const gcCountRateExpression = new cw.MathExpression({
             expression: 'RATE(METRICS()) * 60',
             label: 'Old Generation GC Count Rate',
-            period: this.MONITORING_PERIOD,
+            period: this.monitoringPeriod,
             usingMetrics: {
                 'm1': new cw.Metric({
                     ...this.DEFAULT_METRIC_PROPS,
@@ -184,7 +184,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             metric: new cw.MathExpression({
                 expression: '(m1 * 100)/60000',
                 label: 'Old Generation GC Time Percent',
-                period: this.MONITORING_PERIOD,
+                period: this.monitoringPeriod,
                 usingMetrics: {
                     'm1': new cw.Metric({
                         ...this.DEFAULT_METRIC_PROPS,
@@ -203,7 +203,7 @@ export class ApplicationMonitoring extends MonitoringBase {
         });
 
         //---------------------------------------------------------------------
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createAlarmWidget('CPU Utilization', cpuUtilizationAlarm),
             this.createAlarmWidget('Heap Memory Utilization', heapMemoryAlarm),
             this.createWidgetWithoutUnits('Thread Count', threadCountMetric),
@@ -213,7 +213,7 @@ export class ApplicationMonitoring extends MonitoringBase {
     }
 
     private addApplicationProgress() {
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Flink Application Progress\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Flink Application Progress\n'));
 
         //---------------------------------------------------------------------
         const incomingRecordsMetric = new cw.Metric({
@@ -252,7 +252,7 @@ export class ApplicationMonitoring extends MonitoringBase {
         const eventTimeExpression = new cw.MathExpression({
             expression: 'm1 - m2',
             label: 'Event Time Latency',
-            period: this.MONITORING_PERIOD,
+            period: this.monitoringPeriod,
             usingMetrics: {
                 'm1': new cw.Metric({ ...outputWatermarkMetric, label: '' }),
                 'm2': new cw.Metric({ ...inputWatermarkMetric, label: '' })
@@ -267,7 +267,7 @@ export class ApplicationMonitoring extends MonitoringBase {
         });
 
         //---------------------------------------------------------------------
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createWidgetWithoutUnits('Incoming Records (Per Second)', incomingRecordsMetric),
             this.createAlarmWidget('Outgoing Records (Per Second)', recordsOutAlarm),
             this.createWidgetWithoutUnits('Input Watermark', inputWatermarkMetric),
@@ -298,8 +298,8 @@ export class ApplicationMonitoring extends MonitoringBase {
             });
 
             //---------------------------------------------------------------------
-            this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Source Metrics\n'));
-            this.Dashboard.addWidgets(this.createAlarmWidget('Kinesis MillisBehindLatest', millisBehindAlarm));
+            this.dashboard.addWidgets(this.createMarkdownWidget('\n# Kinesis Source Metrics\n'));
+            this.dashboard.addWidgets(this.createAlarmWidget('Kinesis MillisBehindLatest', millisBehindAlarm));
         } else if (kafkaTopicName !== undefined) {
             //---------------------------------------------------------------------
             const kafkaMetric = new cw.Metric({
@@ -312,13 +312,13 @@ export class ApplicationMonitoring extends MonitoringBase {
             });
 
             //---------------------------------------------------------------------
-            this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Kafka Source Metrics\n'));
-            this.Dashboard.addWidgets(this.createWidgetWithoutUnits('Kafka RecordsLagMax', kafkaMetric));
+            this.dashboard.addWidgets(this.createMarkdownWidget('\n# Kafka Source Metrics\n'));
+            this.dashboard.addWidgets(this.createWidgetWithoutUnits('Kafka RecordsLagMax', kafkaMetric));
         }
     }
 
     private addLogging(applicationName: string, logGroupName: string) {
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Logs Insights\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Logs Insights\n'));
 
         const applicationArn = `arn:${cdk.Aws.PARTITION}:kinesisanalytics:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:application\/${applicationName}`;
 
@@ -330,7 +330,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             '| sort @timestamp desc',
             `| limit ${this.LOG_QUERY_LIMIT}`
         ].join('\n');
-        this.Dashboard.addWidgets(this.createLogWidget(logGroupName, 'Distribution of Tasks', distributionOfTasksQuery));
+        this.dashboard.addWidgets(this.createLogWidget(logGroupName, 'Distribution of Tasks', distributionOfTasksQuery));
 
         const changeInParallelismQuery = [
             'fields @timestamp, @parallelism',
@@ -339,7 +339,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             '| sort @timestamp asc',
             `| limit ${this.LOG_QUERY_LIMIT}`
         ].join('\n');
-        this.Dashboard.addWidgets(this.createLogWidget(logGroupName, 'Change in Parallelism', changeInParallelismQuery));
+        this.dashboard.addWidgets(this.createLogWidget(logGroupName, 'Change in Parallelism', changeInParallelismQuery));
 
         const accessDeniedQuery = [
             'fields @timestamp, @message, @messageType',
@@ -348,7 +348,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             '| sort @timestamp desc',
             `| limit ${this.LOG_QUERY_LIMIT}`
         ].join('\n');
-        this.Dashboard.addWidgets(this.createLogWidget(logGroupName, 'Access Denied', accessDeniedQuery));
+        this.dashboard.addWidgets(this.createLogWidget(logGroupName, 'Access Denied', accessDeniedQuery));
 
         const resourceNotFoundQuery = [
             'fields @timestamp, @message',
@@ -357,7 +357,7 @@ export class ApplicationMonitoring extends MonitoringBase {
             '| sort @timestamp desc',
             `| limit ${this.LOG_QUERY_LIMIT}`
         ].join('\n');
-        this.Dashboard.addWidgets(this.createLogWidget(logGroupName, 'Source or Sink Not Found', resourceNotFoundQuery));
+        this.dashboard.addWidgets(this.createLogWidget(logGroupName, 'Source or Sink Not Found', resourceNotFoundQuery));
 
         const appFailuresQuery = [
             'fields @timestamp, @message',
@@ -366,6 +366,6 @@ export class ApplicationMonitoring extends MonitoringBase {
             '| sort @timestamp desc',
             `| limit ${this.LOG_QUERY_LIMIT}`
         ].join('\n');
-        this.Dashboard.addWidgets(this.createLogWidget(logGroupName, 'Application Task-Related Failures', appFailuresQuery));
+        this.dashboard.addWidgets(this.createLogWidget(logGroupName, 'Application Task-Related Failures', appFailuresQuery));
     }
 }

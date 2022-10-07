@@ -20,7 +20,7 @@ export interface ExecutionRoleProps {
 }
 
 export class ExecutionRole extends cdk.Construct {
-    public readonly Role: iam.IRole;
+    public readonly role: iam.IRole;
 
     constructor(scope: cdk.Construct, id: string, props?: ExecutionRoleProps) {
         super(scope, id);
@@ -40,7 +40,7 @@ export class ExecutionRole extends cdk.Construct {
             (inlinePolicies as any)[props.inlinePolicyName] = props.inlinePolicyDocument;
         }
 
-        this.Role = new iam.Role(this, 'Role', {
+        this.role = new iam.Role(this, 'Role', {
             assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
             inlinePolicies
         });

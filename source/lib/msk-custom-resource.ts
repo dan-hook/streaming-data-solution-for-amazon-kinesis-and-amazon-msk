@@ -52,17 +52,17 @@ export class KafkaMetadata extends cdk.Construct {
             })
         });
 
-        const cfnRole = metadataRole.Role.node.defaultChild as iam.CfnRole;
+        const cfnRole = metadataRole.role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'MSK actions do not support resource level permissions'
+            id: 'W11',
+            reason: 'MSK actions do not support resource level permissions'
         });
 
         const metadataFunction = new lambda.Function(this, 'CustomResource', {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
             description: 'This function retrieves metadata (such as list of brokers and networking) from a MSK cluster',
-            role: metadataRole.Role,
+            role: metadataRole.role,
             code: lambda.Code.fromAsset('lambda/msk-metadata'),
             timeout: cdk.Duration.minutes(1)
         });

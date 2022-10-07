@@ -43,17 +43,17 @@ export class KafkaMonitoring extends cdk.Construct {
             })
         });
 
-        const cfnRole = monitoringRole.Role.node.defaultChild as iam.CfnRole;
+        const cfnRole = monitoringRole.role.node.defaultChild as iam.CfnRole;
         CfnNagHelper.addSuppressions(cfnRole, {
-            Id: 'W11',
-            Reason: 'DescribeCluster does not support resource level permissions'
+            id: 'W11',
+            reason: 'DescribeCluster does not support resource level permissions'
         });
 
         const monitoringFunction = new lambda.Function(this, 'Function', {
             runtime: lambda.Runtime.PYTHON_3_8,
             handler: 'lambda_function.handler',
             description: 'This function creates a dashboard that monitors the health of a MSK cluster',
-            role: monitoringRole.Role,
+            role: monitoringRole.role,
             code: lambda.Code.fromAsset('lambda/msk-dashboard'),
             timeout: cdk.Duration.seconds(30)
         });

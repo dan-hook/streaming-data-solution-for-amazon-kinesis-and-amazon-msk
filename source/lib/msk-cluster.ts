@@ -96,7 +96,7 @@ export class KafkaCluster extends cdk.Construct {
         return 16384;
     }
 
-    public static get RequiredRules() {
+    public static get RequiredRules(): { port: number, description: string }[] {
         return [
             { port: 2181, description: 'ZooKeeper Plaintext' },
             { port: 2182, description: 'ZooKeeper TLS' },

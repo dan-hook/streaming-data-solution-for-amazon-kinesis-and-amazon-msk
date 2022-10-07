@@ -22,7 +22,7 @@ export interface EncryptedBucketProps {
 }
 
 export class EncryptedBucket extends cdk.Construct {
-    public readonly Bucket: s3.IBucket;
+    public readonly bucket: s3.IBucket;
 
     constructor(scope: cdk.Construct, id: string, props: EncryptedBucketProps) {
         super(scope, id);
@@ -34,8 +34,8 @@ export class EncryptedBucket extends cdk.Construct {
 
         const accessLogsBucket = new s3.Bucket(this, 'AccessLogsBucket', securitySettings);
         CfnNagHelper.addSuppressions(accessLogsBucket.node.defaultChild as s3.CfnBucket, [
-            { Id: 'W35', Reason: 'This bucket is used to store access logs for another bucket' },
-            { Id: 'W51', Reason: 'This bucket does not need a bucket policy' }
+            { id: 'W35', reason: 'This bucket is used to store access logs for another bucket' },
+            { id: 'W51', reason: 'This bucket does not need a bucket policy' }
         ]);
 
         const rules: s3.LifecycleRule[] = [{
@@ -55,18 +55,18 @@ export class EncryptedBucket extends cdk.Construct {
             });
         }
 
-       this.Bucket = new s3.Bucket(this, 'Bucket', {
+        this.bucket = new s3.Bucket(this, 'Bucket', {
             ...securitySettings,
             serverAccessLogsBucket: accessLogsBucket,
             lifecycleRules: rules
         });
 
-        this.Bucket.addToResourcePolicy(new iam.PolicyStatement({
+        this.bucket.addToResourcePolicy(new iam.PolicyStatement({
             sid: 'HttpsOnly',
             effect: iam.Effect.DENY,
             resources: [
-                this.Bucket.arnForObjects('*'),
-                this.Bucket.bucketArn
+                this.bucket.arnForObjects('*'),
+                this.bucket.bucketArn
             ],
             actions: ['*'],
             principals: [new iam.AnyPrincipal()],

@@ -44,14 +44,14 @@ export class DataStreamMonitoring extends MonitoringBase {
 
         const defaultMetricProps = {
             namespace: 'AWS/Lambda',
-            period: this.MONITORING_PERIOD,
+            period: this.monitoringPeriod,
             dimensionsMap: {
                 'FunctionName': functionName,
                 'Resource': functionName
             }
         };
 
-        this.Dashboard.addWidgets(this.createMarkdownWidget('\n# Lambda Metrics\n'));
+        this.dashboard.addWidgets(this.createMarkdownWidget('\n# Lambda Metrics\n'));
 
         //---------------------------------------------------------------------
         const invocationsMetric = new cw.Metric({
@@ -78,7 +78,7 @@ export class DataStreamMonitoring extends MonitoringBase {
         const availabilityExpression = new cw.MathExpression({
             expression: '100 - 100 * errors / MAX([errors, invocations])',
             label: 'Success rate (%)',
-            period: this.MONITORING_PERIOD,
+            period: this.monitoringPeriod,
             color: cw.Color.GREEN,
             usingMetrics: {
                 'errors': errorsMetric,
@@ -108,7 +108,7 @@ export class DataStreamMonitoring extends MonitoringBase {
         });
 
         //---------------------------------------------------------------------
-        this.Dashboard.addWidgets(
+        this.dashboard.addWidgets(
             this.createWidgetWithUnits('Invocations', invocationsMetric),
             this.createWidgetWithUnits('Duration', durationMetrics),
             this.createAvailabilityWidget('Error count and success rate (%)', errorsMetric, availabilityExpression),

@@ -24,24 +24,24 @@ export class CfnNagAspect extends cdk.Construct implements cdk.IAspect {
             const cfnFunction = node.node.defaultChild as lambda.CfnFunction;
             CfnNagHelper.addSuppressions(cfnFunction, [
                 {
-                    Id: 'W89',
-                    Reason: 'This function does not need to be deployed in a VPC'
+                    id: 'W89',
+                    reason: 'This function does not need to be deployed in a VPC'
                 },
                 {
-                    Id: 'W92',
-                    Reason: 'This function does not require reserved concurrency'
+                    id: 'W92',
+                    reason: 'This function does not require reserved concurrency'
                 }
             ]);
         } else if (node instanceof ec2.CfnSecurityGroup) {
             CfnNagHelper.addSuppressions(node, {
-                Id: 'F1000',
-                Reason: 'No egress rule defined as default (all traffic allowed outbound) is sufficient for this resource'
+                id: 'F1000',
+                reason: 'No egress rule defined as default (all traffic allowed outbound) is sufficient for this resource'
             });
         } else if (node instanceof logs.LogGroup) {
             const cfnLogGroup = node.node.defaultChild as logs.CfnLogGroup;
             CfnNagHelper.addSuppressions(cfnLogGroup, {
-                Id: 'W84',
-                Reason: 'Log group data is always encrypted in CloudWatch Logs using an AWS Managed KMS Key'
+                id: 'W84',
+                reason: 'Log group data is always encrypted in CloudWatch Logs using an AWS Managed KMS Key'
             });
         }
     }

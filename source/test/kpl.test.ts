@@ -37,7 +37,7 @@ test('creates a KPL instance', () => {
     });
 
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
-    expect(kpl.InstanceId).not.toBeUndefined();
+    expect(kpl.instanceId).not.toBeUndefined();
 });
 
 test('adds cfn_nag suppressions', () => {
