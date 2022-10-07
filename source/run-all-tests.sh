@@ -111,6 +111,10 @@ run_cdk_project_test "CDK - AWS Streaming Data Solution"
 
 # Test the Lambda functions
 cd $source_dir/lambda
+#The kda-vpc-config test requires a region to be set.
+if [[ -z "$AWS_DEFAULT_REGION" ]]; then
+    export AWS_DEFAULT_REGION=us-east-1
+fi
 for folder in */ ; do
     cd "$folder"
     function_name=${PWD##*/}
