@@ -50,14 +50,15 @@ class LambdaTest(unittest.TestCase):
         custom_resource(event, None)
 
         expected_metrics_endpoint = 'https://metrics.awssolutionsbuilder.com/generic'
-        actual_metrics_endpoint = mock_post.call_args.args[0]
+        args, kwargs = mock_post.call_args
+        actual_metrics_endpoint = args[0]
         self.assertEqual(expected_metrics_endpoint, actual_metrics_endpoint)
 
         expected_headers = {'Content-Type': 'application/json'}
-        actual_headers = mock_post.call_args.kwargs['headers']
+        actual_headers = kwargs['headers']
         self.assertEqual(expected_headers, actual_headers)
 
-        actual_payload = mock_post.call_args.kwargs['json']
+        actual_payload = kwargs['json']
         self.assertIn('Solution', actual_payload)
         self.assertIn('UUID', actual_payload)
         self.assertIn('TimeStamp', actual_payload)
