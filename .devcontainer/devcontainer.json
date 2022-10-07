@@ -1,0 +1,10 @@
+{
+    "name": "VS Code DEV Container for AWS CDK development",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "USER_UID": "${localEnv:ENV_UID}"
+        }
+    },
+    "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+}
